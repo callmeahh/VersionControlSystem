@@ -1,4 +1,4 @@
-package program;
+package project;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -8,9 +8,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 
-public class blobKey {
+public class RecordKey {
 	// 设置文件存放路径
-	private static String filePar = "E:\\JavaWorkspace\\VersionRepository";
+	private static String filePar = "D:\\0.课程资料\\java\\项目";
 
 	// 获取路径下所有文件的地址
 	private static File[] getFileList() {
@@ -57,7 +57,8 @@ public class blobKey {
 	}
 
 	// 将tree类型文件夹存入本地
-	public static void recordTree(String filename, String content) throws Exception {
+	public static void recordTree(String content) throws Exception {
+		String filename = GetHashSHA1.getStringHash(content);
 		String outputPath = filePar + File.separator + filename;
 		BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(outputPath));
 		bos.write(content.getBytes());
