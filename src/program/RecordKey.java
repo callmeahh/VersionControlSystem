@@ -1,4 +1,4 @@
-package project;
+package program;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -10,7 +10,7 @@ import java.io.FileReader;
 
 public class RecordKey {
 	// 设置文件存放路径
-	private static String filePar = "D:\\0.课程资料\\java\\项目";
+	private static String filePar = "E:\\JavaWorkspace\\VersionRepository";
 
 	// 获取路径下所有文件的地址
 	private static File[] getFileList() {
@@ -67,18 +67,22 @@ public class RecordKey {
 	}
 
 	// 通过key查找value
-	public static void searchValue(String hash) throws Exception {
+	public static String searchValue(String hash) throws Exception {
 		File[] fl = getFileList();
 		int flag = findSubstring(fl, hash);
 		if (flag != -1) {
 			BufferedReader bufferedReader = new BufferedReader(new FileReader(fl[flag]));
-			String str;
+			String str = "";
+			StringBuilder sb = new StringBuilder();
 			while ((str = bufferedReader.readLine()) != null) {
-				System.out.printf(str, "UTF-8");
+				sb.append(str + "\n");
+				System.out.println(new String(str.getBytes(),"UTF-8"));
 			}
 			bufferedReader.close();
+			return new String(sb.toString().getBytes(),"UTF-8");
 		} else {
 			System.out.println("输入的哈希值不正确，请重新输入！");
+			return null;
 		}
 	}
 }
