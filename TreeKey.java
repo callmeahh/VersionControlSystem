@@ -53,7 +53,7 @@ public class TreeKey {
                 str += f.getName();
                 str += getTreeKey(path + File.separator + f.getName());
                 //将文件夹生成的key记录到本地文件
-                blobKey.recordTree(stringToKey(str));
+                blobKey.recordTree(stringToKey(str), str);
             }
         }
         //将treeValue（字符串）转换成treeKey（字符串）
