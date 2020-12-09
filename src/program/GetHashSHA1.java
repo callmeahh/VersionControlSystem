@@ -1,13 +1,15 @@
 package program;
 
-import java.io.InputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.security.MessageDigest;
 
 public class GetHashSHA1 {
 	// 将字符串通过SHA-1方法哈希
-	public static String getFileHash(InputStream is) throws Exception {
+	public static String getFileHash(File file) throws Exception {
 		byte[] buffer = new byte[1024];
 		MessageDigest complete = MessageDigest.getInstance("SHA-1");
+		FileInputStream is = new FileInputStream(file);
 		int numRead = 0;
 		do {
 			numRead = is.read(buffer);
@@ -15,6 +17,7 @@ public class GetHashSHA1 {
 				complete.update(buffer, 0, numRead);
 			}
 		} while (numRead != -1);
+		is.close();
 		return bytesToHexString(complete.digest());
 	}
 

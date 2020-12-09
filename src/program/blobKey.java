@@ -44,7 +44,7 @@ public class blobKey {
 	public static void recordBlob(String filename) throws Exception {
 		File file = new File(filename);
 		BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
-		String fileHash = GetHashSHA1.getFileHash(bis);
+		String fileHash = GetHashSHA1.getFileHash(file);
 		int len;
 		String outputPath = filePar + File.separator + fileHash;
 		BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(outputPath));
