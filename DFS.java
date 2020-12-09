@@ -36,29 +36,32 @@ public class DFS {
         	Arrays.sort(files);
         	}
         //str记录treeValue
-        String str = "";
+        StringBuilder str = new StringBuilder();
+//        String str = "";
         // 对文件夹目录遍历
         for (File f: files) {
             // 如果是文件，则将文件名和文件key加到str
             if (f.isFile()) {
-                str += f.getName();
-                str += GetHashSHA1.getFileHash(f);
+            	str.append("blob ");
+                str.append("{"+GetHashSHA1.getFileHash(f)+"} ");
+                str.append(f.getName()+"\n");
                //将文件生成的key记录到本地文件
                 RecordKey.recordBlob(path + File.separator + f.getName());
-//                System.out.println("file "+str);
+                System.out.println("file "+str);
             }
             // 如果是文件夹，则将文件夹名和文件夹key（递归将文件夹（file）转换成treeValue（字符串））加到str
             if (f.isDirectory()) {
-                str += f.getName();
-                str += getTreeKey(path + File.separator + f.getName());
-//                System.out.println("dir "+str);
+            	str.append("tree ");
+                str.append("{"+getTreeKey(path + File.separator + f.getName())+"} ");
+                str.append(f.getName()+"\n");
+                System.out.println("dir "+str);
             }
         }
-//        System.out.println("all "+str);
+        System.out.println("all "+str);
         //将文件夹生成的key记录到本地文件
-        RecordKey.recordTree(str);
+        RecordKey.recordTree(str.toString());
         //将treeValue（字符串）转换成treeKey（字符串）
-        return GetHashSHA1.getStringHash(str);
+        return GetHashSHA1.getStringHash(str.toString());
 	}
 	public static void main(String[] args) throws Exception {
 		getTreeKey("D:\\0.课程资料\\java\\新建文件夹");
