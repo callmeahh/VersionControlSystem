@@ -31,8 +31,14 @@ public class GetHashSHA1 {
 	// 将数组类型转为字符串
 	private static String bytesToHexString(byte[] b) {
 		String hashString = "";
-		for (int j = 0; j < b.length; j++) {
-			hashString += Integer.toString(b[j] & 0xFF, 16);
+		int n = b.length;
+		for (int i = 0; i < n; i++) {
+			String append = Integer.toString(b[i] & 0xFF, 16);
+			if (append.length() < 2) {
+				hashString += "0" + append;
+			} else {
+				hashString += append;
+			}
 		}
 		return hashString;
 	}

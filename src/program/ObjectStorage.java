@@ -8,9 +8,32 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 
-public class RecordKey {
+public class ObjectStorage {
 	// 设置文件存放路径
-	private static String filePar = "E:\\JavaWorkspace\\VersionRepository";
+	private static final String filePar = "E:\\JavaWorkspace\\VersionRepository";
+
+	// 将blob类型文件存入本地
+	public static void storeBlob(String key, File file) throws Exception {
+		BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+		int len;
+		String outputPath = filePar + File.separator + key;
+		BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(outputPath));
+		while ((len = bis.read()) != -1) {
+			bos.write(len);
+		}
+		bis.close();
+		bos.close();
+		System.out.println("执行完毕，文件导出到 " + outputPath);
+	}
+
+	// 将tree类型文件夹存入本地
+	public static void storeTree(String key, String value) throws Exception {
+		String outputPath = filePar + File.separator + key;
+		BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(outputPath));
+		bos.write(value.getBytes());
+		bos.close();
+		System.out.println("执行完毕，文件导出到 " + outputPath);
+	}
 
 	// 获取路径下所有文件的地址
 	private static File[] getFileList() {
@@ -40,32 +63,6 @@ public class RecordKey {
 			return -1; // 找到其他匹配值，返回-1
 	}
 
-	// 将blob类型文件存入本地
-	public static void recordBlob(String filename) throws Exception {
-		File file = new File(filename);
-		BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
-		String fileHash = GetHashSHA1.getFileHash(file);
-		int len;
-		String outputPath = filePar + File.separator + fileHash;
-		BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(outputPath));
-		while ((len = bis.read()) != -1) {
-			bos.write(len);
-		}
-		bis.close();
-		bos.close();
-		System.out.println("执行完毕，文件导出到 " + outputPath);
-	}
-
-	// 将tree类型文件夹存入本地
-	public static void recordTree(String content) throws Exception {
-		String filename = GetHashSHA1.getStringHash(content);
-		String outputPath = filePar + File.separator + filename;
-		BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(outputPath));
-		bos.write(content.getBytes());
-		bos.close();
-		System.out.println("执行完毕，文件导出到 " + outputPath);
-	}
-
 	// 通过key查找value
 	public static String searchValue(String hash) throws Exception {
 		File[] fl = getFileList();
@@ -76,10 +73,10 @@ public class RecordKey {
 			StringBuilder sb = new StringBuilder();
 			while ((str = bufferedReader.readLine()) != null) {
 				sb.append(str + "\n");
-				System.out.println(new String(str.getBytes(),"UTF-8"));
+				System.out.println(new String(str.getBytes(), "UTF-8"));
 			}
 			bufferedReader.close();
-			return new String(sb.toString().getBytes(),"UTF-8");
+			return new String(sb.toString().getBytes(), "UTF-8");
 		} else {
 			System.out.println("输入的哈希值不正确，请重新输入！");
 			return null;
