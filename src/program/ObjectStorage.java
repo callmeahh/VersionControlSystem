@@ -10,10 +10,11 @@ import java.io.FileReader;
 
 public class ObjectStorage {
 	// 设置文件存放路径
-	private static final String filePar = "E:\\JavaWorkspace\\VersionRepository";
+	private static final String filePar = "D:\\0.课程资料\\java\\项目";
+	private static final String Head = "Head";
 
 	// 将blob类型文件存入本地
-	public static void storeBlob(String key, File file) throws Exception {
+	public static void storeFromFile(String key, File file) throws Exception {
 		BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
 		int len;
 		String outputPath = filePar + File.separator + key;
@@ -27,16 +28,16 @@ public class ObjectStorage {
 	}
 
 	// 将tree类型文件夹存入本地
-	public static void storeTree(String key, String value) throws Exception {
+	public static void storeFromString(String key, String value, boolean append) throws Exception {
 		String outputPath = filePar + File.separator + key;
-		BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(outputPath));
+		BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(outputPath, append));
 		bos.write(value.getBytes());
 		bos.close();
 		System.out.println("执行完毕，文件导出到 " + outputPath);
 	}
 
 	// 获取路径下所有文件的地址
-	private static File[] getFileList() {
+	public static File[] getFileList() {
 		File dir = new File(filePar);
 		return dir.listFiles();
 	}
@@ -81,5 +82,65 @@ public class ObjectStorage {
 			System.out.println("输入的哈希值不正确，请重新输入！");
 			return null;
 		}
+	}
+	
+	//查找Head文件
+	public static File searchHead() throws Exception{
+		File[] fl = getFileList();
+		for(int i = 0; i < fl.length; i++) {
+			if(fl[i].getName().equals(getHead())) {
+				return fl[i];
+			}
+		}
+		//没有Head文件则创建文件
+		String path = filePar + File.separator + getHead();
+		File f = new File(path);
+		f.createNewFile();
+		return f;
+	}
+	
+	//读取Head文件的第一个commit的key作为parent
+	public static String getParent() throws Exception {
+		File fHead = searchHead();
+		BufferedReader bufferedReader = new BufferedReader(new FileReader(fHead));
+		StringBuilder par = new StringBuilder();
+		par.append("parent ");
+		//若Head中没有commit，则将par初始化为40个0
+		if(bufferedReader.readLine() == null) {
+			for(int i = 0; i < 40; i++) {
+				par.append("0");
+			}
+			par.append("\n");
+			bufferedReader.close();
+			return par.toString();
+		}
+		//有则读取倒数第二行的treekey
+		else {
+			int line = 0;
+			while (bufferedReader.readLine() != null) {
+				line++;
+			}
+			String str = "";
+			for(int i = 0; i == line-1; i++) {
+				str = bufferedReader.readLine();
+			}
+			par.append(str+"\n");
+			//删除readLine中的"tree "字符
+			par.delete(7, 12);
+			bufferedReader.close();
+			return par.toString();
+		}
+	}
+
+	public static String stringFromFile(File f) throws Exception {
+		BufferedReader bufferedReader = new BufferedReader(new FileReader(f));
+		StringBuilder str = new StringBuilder();
+		str.append(bufferedReader.readLine()+"\n");
+		bufferedReader.close();
+		return str.toString();
+	}
+	
+	public static String getHead() {
+		return Head;
 	}
 }
