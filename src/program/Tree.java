@@ -7,6 +7,7 @@ public class Tree extends KeyValueObject {
 
 	public Tree(String filename) throws Exception {
 		File file = new File(filename);
+		this.key = generateKey();
 		for (File f : file.listFiles()) {
 			if (f.isFile()) {
 				content.append("blob " + new Blob(f.getAbsolutePath()).getKey() + " " + f.getName() + "\n");
@@ -14,7 +15,7 @@ public class Tree extends KeyValueObject {
 				content.append("tree " + new Tree(f.getAbsolutePath()).getKey() + " " + f.getName() + "\n");
 			}
 		}
-		recordTree(content.toString());
+		record();
 	}
 
 	public String getValue() {
@@ -24,5 +25,28 @@ public class Tree extends KeyValueObject {
 	@Override
 	public String toString() {
 		return "040000 tree" + getKey();
+	}
+
+	@Override
+	public void record() {
+		// TODO Auto-generated method stub
+		try {
+			ObjectStorage.storeTree(key, getValue());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public String generateKey() {
+		// TODO Auto-generated method stub
+		try {
+			key = GetHashSHA1.getStringHash(getValue());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return key;
 	}
 }

@@ -2,6 +2,7 @@ package program;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.security.MessageDigest;
 
 public class GetHashSHA1 {
