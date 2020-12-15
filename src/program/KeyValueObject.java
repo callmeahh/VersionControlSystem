@@ -1,22 +1,18 @@
 package program;
 
-import java.io.File;
-
 public abstract class KeyValueObject {
-	private String key;
+	protected String key = null;;
 
-	// 生成Blob对象的key并在本地仓库生成文件
-	public void recordFromFile(File file) throws Exception {
-		key = GetHashSHA1.getFileHash(file);
-		ObjectStorage.storeFromFile(key, file);
-	}
+	// 将对象记录到文件
+	protected abstract void record();
 
-	// 生成Tree对象的key并在本地仓库生成文件
-	public void recordFromString(String content, boolean append) throws Exception {
-		key = GetHashSHA1.getStringHash(content);
-		ObjectStorage.storeFromString(key, content, append);
-	}
+	// 生成key
+	protected abstract String generateKey();
 
+	// 获取value
+	public abstract String getValue();
+
+	// 获取key
 	public String getKey() {
 		return key;
 	}

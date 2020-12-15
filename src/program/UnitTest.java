@@ -2,15 +2,20 @@ package program;
 
 public class UnitTest {
 	public static void main(String[] args) throws Exception {
+		// 设置文件保存目录
+		ObjectStorage.setFilePath("E:\\JavaWorkspace\\VersionRepository");
 		// 创建Blob对象
-		new Blob("D:\\0.课程资料\\java\\新建文件夹\\1.txt");
+		new Blob("E:\\JavaWorkspace\\123456789.txt");
 		// 创建Tree对象
-		new Tree("D:\\0.课程资料\\java\\新建文件夹");
-		// 通过存在的哈希值查找value
-		String s1 = "7e028216eed7b4ca24904db730c8d29dc5137d83";
-		ObjectStorage.searchValue(s1);
-		// 通过不存在的哈希值查找value
-		String s2 = "abcdf";
-		ObjectStorage.searchValue(s2);
+		Tree t1 = new Tree("E:\\JavaWorkspace\\helloworld\\testdir");
+		Tree t2 = new Tree("E:\\JavaWorkspace\\helloworld\\testdir2");
+
+		// 创建commit对象
+		new Commit(t1);
+		System.out.println("\n当前HEAD文件中的内容为："+Head.getHead());
+		System.out.println("当前HEADLog文件中的内容为：\n"+Head.getHeadlog());
+		new Commit(t2, "commit-2");
+		System.out.println("\n当前HEAD文件中的内容为："+Head.getHead());
+		System.out.println("当前HEADLog文件中的内容为：\n"+Head.getHeadlog());
 	}
 }

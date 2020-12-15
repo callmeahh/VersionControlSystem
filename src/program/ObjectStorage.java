@@ -9,15 +9,14 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 
 public class ObjectStorage {
-	// 设置文件存放路径
-	private static final String filePar = "D:\\0.课程资料\\java\\项目";
-	private static final String Head = "Head";
+	// 文件存放路径
+	private static String filePath = "E:\\JavaWorkspace\\VersionRepository";
 
-	// 将blob类型文件存入本地
+	// 将文件类型存入本地
 	public static void storeFromFile(String key, File file) throws Exception {
 		BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
 		int len;
-		String outputPath = filePar + File.separator + key;
+		String outputPath = filePath + File.separator + key;
 		BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(outputPath));
 		while ((len = bis.read()) != -1) {
 			bos.write(len);
@@ -27,9 +26,9 @@ public class ObjectStorage {
 		System.out.println("执行完毕，文件导出到 " + outputPath);
 	}
 
-	// 将tree类型文件夹存入本地
+	// 将字符串类型存入本地
 	public static void storeFromString(String key, String value, boolean append) throws Exception {
-		String outputPath = filePar + File.separator + key;
+		String outputPath = filePath + File.separator + key;
 		BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(outputPath, append));
 		bos.write(value.getBytes());
 		bos.close();
@@ -38,11 +37,11 @@ public class ObjectStorage {
 
 	// 获取路径下所有文件的地址
 	public static File[] getFileList() {
-		File dir = new File(filePar);
+		File dir = new File(filePath);
 		return dir.listFiles();
 	}
 
-	// 字符串匹配
+	// 字符串匹配（用于获取通过部分key寻找value）
 	private static int findSubstring(File[] fl, String s2) {
 		int n = 0;
 		int index = -1;
@@ -58,10 +57,7 @@ public class ObjectStorage {
 				}
 			}
 		}
-		if (n == 1)
-			return index; // 找到一个匹配值，返回该下标
-		else
-			return -1; // 找到其他匹配值，返回-1
+		return n == 1 ? index : -1; // 找到一个匹配返回其下标，否则返回-1
 	}
 
 	// 通过key查找value
@@ -69,78 +65,35 @@ public class ObjectStorage {
 		File[] fl = getFileList();
 		int flag = findSubstring(fl, hash);
 		if (flag != -1) {
-			BufferedReader bufferedReader = new BufferedReader(new FileReader(fl[flag]));
-			String str = "";
-			StringBuilder sb = new StringBuilder();
-			while ((str = bufferedReader.readLine()) != null) {
-				sb.append(str + "\n");
-				System.out.println(new String(str.getBytes(), "UTF-8"));
-			}
-			bufferedReader.close();
-			return new String(sb.toString().getBytes(), "UTF-8");
+			String value = new String(getString(fl[flag]).getBytes(), "UTF-8");
+			System.out.println(value);
+			return value;
 		} else {
 			System.out.println("输入的哈希值不正确，请重新输入！");
 			return null;
 		}
 	}
-	
-	//查找Head文件
-	public static File searchHead() throws Exception{
-		File[] fl = getFileList();
-		for(int i = 0; i < fl.length; i++) {
-			if(fl[i].getName().equals(getHead())) {
-				return fl[i];
-			}
+
+	// 获取文件中的内容
+	protected static String getString(File file) throws Exception {
+		BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+		String str = "";
+		StringBuilder sb = new StringBuilder();
+		sb.append(str = bufferedReader.readLine());
+		while ((str = bufferedReader.readLine()) != null) {
+			sb.append("\n" + str);
 		}
-		//没有Head文件则创建文件
-		String path = filePar + File.separator + getHead();
-		File f = new File(path);
-		f.createNewFile();
-		return f;
-	}
-	
-	//读取Head文件的第一个commit的key作为parent
-	public static String getParent() throws Exception {
-		File fHead = searchHead();
-		BufferedReader bufferedReader = new BufferedReader(new FileReader(fHead));
-		StringBuilder par = new StringBuilder();
-		par.append("parent ");
-		//若Head中没有commit，则将par初始化为40个0
-		if(bufferedReader.readLine() == null) {
-			for(int i = 0; i < 40; i++) {
-				par.append("0");
-			}
-			par.append("\n");
-			bufferedReader.close();
-			return par.toString();
-		}
-		//有则读取倒数第二行的treekey
-		else {
-			int line = 0;
-			while (bufferedReader.readLine() != null) {
-				line++;
-			}
-			String str = "";
-			for(int i = 0; i == line-1; i++) {
-				str = bufferedReader.readLine();
-			}
-			par.append(str+"\n");
-			//删除readLine中的"tree "字符
-			par.delete(7, 12);
-			bufferedReader.close();
-			return par.toString();
-		}
+		bufferedReader.close();
+		return sb.toString();
 	}
 
-	public static String stringFromFile(File f) throws Exception {
-		BufferedReader bufferedReader = new BufferedReader(new FileReader(f));
-		StringBuilder str = new StringBuilder();
-		str.append(bufferedReader.readLine()+"\n");
-		bufferedReader.close();
-		return str.toString();
+	// 设置文件保存路径
+	public static void setFilePath(String filePath) {
+		ObjectStorage.filePath = filePath;
 	}
-	
-	public static String getHead() {
-		return Head;
+
+	// 获取当前文件保存路径
+	public static String getFilepath() {
+		return filePath;
 	}
 }
