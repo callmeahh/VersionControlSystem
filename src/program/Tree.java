@@ -8,7 +8,6 @@ public class Tree extends KeyValueObject {
 	// 通过传入的文件夹路径初始化Blob对象
 	public Tree(String filename) {
 		File file = new File(filename);
-		this.key = generateKey();
 		for (File f : file.listFiles()) {
 			if (f.isFile()) {
 				value.append("blob " + new Blob(f.getAbsolutePath()).getKey() + " " + f.getName() + "\n");
@@ -16,6 +15,7 @@ public class Tree extends KeyValueObject {
 				value.append("tree " + new Tree(f.getAbsolutePath()).getKey() + " " + f.getName() + "\n");
 			}
 		}
+		this.key = generateKey();
 		record();
 	}
 

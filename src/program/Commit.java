@@ -3,21 +3,26 @@ package program;
 public class Commit extends KeyValueObject {
 	private StringBuilder value = new StringBuilder();
 
-	// 通过Tree对象创建commit对象
-	public Commit(Tree tree) {
-		this(tree, null);
+	// 创建默认commit对象
+	public Commit() {
+		this(new Tree(FilepathSetting.getTargetFilepath()), null);
+	}
+
+	// 传入message创建commit对象
+	public Commit(String message) {
+		this(new Tree(FilepathSetting.getTargetFilepath()), message);
 	}
 
 	// 通过tree对象和commit注释创建commit对象
-	public Commit(Tree tree, String message) {
+	private Commit(Tree tree, String message) {
 		value.append("tree " + tree.getKey() + "\n");
-		if (Head.init()) {
-			value.append("parent " + Head.getHead() + "\n");
+		if (!BranchControl.getHead().equals("null")) {
+			value.append("parent " + BranchControl.getHead() + "\n");
 		}
 		value.append(message);
 		this.key = generateKey();
 		record();
-		Head.updateKey(key, message);
+		BranchControl.updateKey(key, message);
 	}
 
 	@Override

@@ -35,7 +35,7 @@ public class Blob extends KeyValueObject {
 	@Override
 	public String getValue() {
 		try {
-			return ObjectStorage.getString(file);
+			return ObjectStorage.getContent(file);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

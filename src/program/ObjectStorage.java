@@ -10,10 +10,10 @@ import java.io.FileReader;
 
 public class ObjectStorage {
 	// 文件存放路径
-	private static String filePath = "E:\\JavaWorkspace\\VersionRepository";
+	private static String filePath = FilepathSetting.getObjectFilepath().getAbsolutePath();
 
 	// 将文件类型存入本地
-	public static void storeFromFile(String key, File file) throws Exception {
+	protected static void storeFromFile(String key, File file) throws Exception {
 		BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
 		int len;
 		String outputPath = filePath + File.separator + key;
@@ -27,7 +27,7 @@ public class ObjectStorage {
 	}
 
 	// 将字符串类型存入本地
-	public static void storeFromString(String key, String value, boolean append) throws Exception {
+	protected static void storeFromString(String key, String value, boolean append) throws Exception {
 		String outputPath = filePath + File.separator + key;
 		BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(outputPath, append));
 		bos.write(value.getBytes());
@@ -35,8 +35,25 @@ public class ObjectStorage {
 		System.out.println("执行完毕，文件导出到 " + outputPath);
 	}
 
+	// 将字符串类型存入本地（传入路径）
+	protected static void storeFromString(String key, String value, String path, boolean append) throws Exception {
+		String outputPath = path + File.separator + key;
+		BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(outputPath, append));
+		bos.write(value.getBytes());
+		bos.close();
+		System.out.println("执行完毕，文件导出到 " + outputPath);
+	}
+
+	// 更新文件内容
+	protected static void updateFile(String content, File file, boolean append) throws Exception {
+		BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file, append));
+		bos.write(content.getBytes());
+		bos.close();
+		System.out.println("执行完毕，文件导出到 " + file.getAbsolutePath());
+	}
+
 	// 获取路径下所有文件的地址
-	public static File[] getFileList() {
+	private static File[] getFileList() {
 		File dir = new File(filePath);
 		return dir.listFiles();
 	}
@@ -61,12 +78,12 @@ public class ObjectStorage {
 	}
 
 	// 通过key查找value
-	public static String searchValue(String hash) throws Exception {
+	protected static String searchValue(String hash) throws Exception {
 		File[] fl = getFileList();
 		int flag = findSubstring(fl, hash);
 		if (flag != -1) {
-			String value = new String(getString(fl[flag]).getBytes(), "UTF-8");
-			System.out.println(value);
+			String value = getContent(fl[flag]);
+			System.out.println(new String(getContent(fl[flag]).getBytes(), "UTF-8"));
 			return value;
 		} else {
 			System.out.println("输入的哈希值不正确，请重新输入！");
@@ -75,7 +92,7 @@ public class ObjectStorage {
 	}
 
 	// 获取文件中的内容
-	protected static String getString(File file) throws Exception {
+	protected static String getContent(File file) throws Exception {
 		BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
 		String str = "";
 		StringBuilder sb = new StringBuilder();
@@ -87,13 +104,62 @@ public class ObjectStorage {
 		return sb.toString();
 	}
 
-	// 设置文件保存路径
-	public static void setFilePath(String filePath) {
-		ObjectStorage.filePath = filePath;
+	// 删除文件夹中所有内容
+	protected static boolean deleteDir(String path) {
+		File file = new File(path);
+		if (!file.exists()) {// 判断是否待删除目录是否存在
+			return false;
+		}
+		String[] content = file.list();// 取得当前目录下所有文件和文件夹
+		for (String name : content) {
+			File temp = new File(path, name);
+			if (temp.isDirectory()) {// 判断是否是目录
+				deleteDir(temp.getAbsolutePath());// 递归调用，删除目录里的内容
+				temp.delete();// 删除空目录
+			} else {
+				if (!temp.delete()) {// 直接删除文件
+					System.err.println("Failed to delete " + name);
+				}
+			}
+		}
+		return true;
 	}
 
-	// 获取当前文件保存路径
-	public static String getFilepath() {
-		return filePath;
+	// 将value格式化成二维数组
+	protected static String[][] formatValue(String key) {
+		String value = null;
+		String[][] formattedValue;
+		try {
+			value = ObjectStorage.searchValue(key);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		String[] first = value.split("\n");
+		formattedValue = new String[first.length][];
+		for (int i = 0; i < first.length; i++) {
+			String[] second = { first[i].substring(0, 4), first[i].substring(5, 45), first[i].substring(46) };
+			formattedValue[i] = new String[second.length];
+			for (int j = 0; j < second.length; j++) {
+				formattedValue[i][j] = second[j];
+			}
+		}
+		return formattedValue;
 	}
+
+	// 将二位数组中的记录的值还原成文件
+	protected static void restoreFiles(String[][] value_2d, String path) {
+		for (int i = 0; i < value_2d.length; i++) {
+			if (value_2d[i][0].equals("blob")) {
+				try {
+					storeFromString(value_2d[i][2], searchValue(value_2d[i][1]), path, false);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			} else if (value_2d[i][0].equals("tree")) {
+				new File(path + File.separator + value_2d[i][2]).mkdirs();
+				restoreFiles(formatValue(value_2d[i][1]), path + File.separator + value_2d[i][2]);
+			}
+		}
+	}
+
 }
