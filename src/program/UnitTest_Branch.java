@@ -2,11 +2,11 @@ package program;
 
 public class UnitTest_Branch {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		// 1. 初始化仓库
 		FilepathSetting.InitRepo();
 		// 2. 设置需要管理的路径
-		String filepath = "E:\\JavaWorkspace\\helloworld\\testdir2";
+		String filepath = "D:\\0.课程资料\\java\\working tree";
 		FilepathSetting.setTargetFilepath(filepath);
 
 		// 3. 分支操作
@@ -31,7 +31,6 @@ public class UnitTest_Branch {
 		BranchControl.switchBranch("testing");
 		BranchControl.getCurrentBranchLog();// 查看当前分支日志
 		BranchControl.getAllLog();// 查看全部日志
-
 	}
 
 }

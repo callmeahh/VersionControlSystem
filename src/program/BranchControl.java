@@ -17,7 +17,7 @@ public class BranchControl {
 		return branchNames;
 	}
 
-	// 获得记录当前分支名的文件
+	// 获得记录当前分支名的文件，HEAD
 	private static File getCurrentBranchFile() {
 		return new File(FilepathSetting.getFilepath() + File.separator + HEAD);
 	}
@@ -32,22 +32,22 @@ public class BranchControl {
 		return null;
 	}
 
-	// 获取当前分支头指针文件
+	// 获取当前分支头指针文件，refs.分支
 	private static File getHeadFile() {
 		return new File(FilepathSetting.getHeadFilepath() + File.separator + getCurrentBranch());
 	}
 
-	// 获取当前分支日志文件
+	// 获取当前分支日志文件，logs.refs.分支
 	private static File getHeadLogFile() {
 		return new File(FilepathSetting.getLogFilepath() + File.separator + getCurrentBranch());
 	}
 
-	// 获得总日志文件
+	// 获得总日志文件，logs.HEAD
 	private static File getAllLogFile() {
 		return new File(FilepathSetting.getAllLogFilepath() + File.separator + HEAD);
 	}
 
-	// 获取当前分支头指针
+	// 1获取当前分支头指针，当前分支commit
 	protected static String getHead() {
 		String str = null;
 		try {
@@ -57,7 +57,7 @@ public class BranchControl {
 		}
 		return str;
 	}
-	//获取指定分支头指针
+	//1获取指定分支头指针
 	private static String getHead(String branchName) {
 		String str = null;
 		try {
@@ -67,9 +67,40 @@ public class BranchControl {
 		}
 		return str;
 	}
+	
+	//获取当前commit的parent个数
+	private static int parentNum(String commit) throws Exception {
+		int count = 0;
+		while(ObjectStorage.searchValue(commit).charAt(46) == 'p') {
+			String par = ObjectStorage.searchValue(commit).substring(53, 93);
+			commit = par;
+			count++;
+		}
+		return count;
+	}
+	
+	//获取当前commit指定次数的parent
+	private static String getBefore(int n) throws Exception {
+		String commit = getHead();
+		String par = ObjectStorage.searchValue(commit).substring(53, 93);
+		n--;
+		for(int i = 0; i < n; i++) {
+			commit = par;
+			par = ObjectStorage.searchValue(commit).substring(53, 93);
+		}
+		return par;
+	}
+	
+	//判断commit是否存在当前分支记录中
+	private static boolean commitExists(String commit) {
+		String content = getCurrentBranchLog();
+		if (content.contains(commit)) {
+			return true;
+		}
+		return false;
+	}
 
-
-	// 得到当前分支日志的内容
+	// 1得到当前分支日志的内容
 	public static String getCurrentBranchLog() {
 		String content = null;
 		try {
@@ -81,7 +112,7 @@ public class BranchControl {
 		return content;
 	}
 
-	// 得到总日志内容
+	// 1得到总日志内容
 	public static String getAllLog() {
 		String content = null;
 		try {
@@ -159,16 +190,18 @@ public class BranchControl {
 			System.out.println("不存在该分支");
 			return getCurrentBranch();
 		} else {
-			for (String branch : getAllBranchName()) {
-				if(!getHead().equals(getHead(branchName))){
-					try {
-						ObjectStorage.deleteDir(FilepathSetting.getTargetFilepath());
-						String tree = ObjectStorage.searchValue(getHead(branchName)).substring(5, 45);
-						ObjectStorage.restoreFiles(ObjectStorage.formatValue(tree), FilepathSetting.getTargetFilepath());
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+			//当前分支的commit与切换分支的commit不相同时才对working tree更新
+			if(!getHead().equals(getHead(branchName))){
+				try {
+					ObjectStorage.deleteDir(FilepathSetting.getTargetFilepath());
+					String tree = ObjectStorage.searchValue(getHead(branchName)).substring(5, 45);
+					ObjectStorage.restoreFiles(ObjectStorage.formatValue(tree), FilepathSetting.getTargetFilepath());
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
+			}
+			//更新log文件
+			for (String branch : getAllBranchName()) {
 				if (branch.equals(branchName)) {
 					String message = "Switch: " + getCurrentBranch() + " -> " + branchName;
 					String key = getHead();
@@ -195,5 +228,59 @@ public class BranchControl {
 		System.out.println(s.toString());
 		return s.toString();
 	}
-
+	
+	//回滚n次，修改repository
+	protected static int logReset(int n) throws Exception{
+		String key = getHead();
+		if(n > parentNum(key) || !commitExists(getBefore(n))) {
+			System.out.println("该分支不存在此commit，请输入正确的回滚次数");
+			return 0;
+		}
+		else {
+			String message = "Reset: " + "moving to HEAD~" + n;
+			String writeline = key + " " + getBefore(n) + " " + message + "\n";
+			//写入logs.HEAD
+			ObjectStorage.updateFile(writeline, getAllLogFile(), true);
+			//写入logs.refs.分支
+			ObjectStorage.updateFile(writeline, getHeadLogFile(), true);
+			//修改refs.分支
+			ObjectStorage.updateFile(getBefore(n), getHeadFile(), false);
+			return 1;
+		}
+	}
+	
+	//回滚到指定commit，修改repository
+	protected static int logReset(String commit) throws Exception {
+		String key = getHead();
+		String before = ObjectStorage.getFullName(commit);
+		if(ObjectStorage.getFullName(commit) != null) {
+			String message = "Reset: " + "moving to " + commit;
+			String writeline = key + " " + before + " " + message + "\n";
+			//写入logs.HEAD
+			ObjectStorage.updateFile(writeline, getAllLogFile(), true);
+			//写入logs.refs.分支
+			ObjectStorage.updateFile(writeline, getHeadLogFile(), true);
+			//修改refs.分支
+			ObjectStorage.updateFile(before, getHeadFile(), false);
+			return 1;
+		}
+		else {
+			return 0;
+		}
+	}
+	
+	//回滚n次，修改working tree
+	protected static void treeReset(int n) throws Exception{
+		ObjectStorage.deleteDir(FilepathSetting.getTargetFilepath());
+		String tree = ObjectStorage.searchValue(getBefore(n)).substring(5, 45);
+		ObjectStorage.restoreFiles(ObjectStorage.formatValue(tree), FilepathSetting.getTargetFilepath());
+	}
+	
+	//回滚到指定commit，修改working tree
+	protected static void treeReset(String commit) throws Exception {
+		String before = ObjectStorage.getFullName(commit);
+		ObjectStorage.deleteDir(FilepathSetting.getTargetFilepath());
+		String tree = ObjectStorage.searchValue(before).substring(5, 45);
+		ObjectStorage.restoreFiles(ObjectStorage.formatValue(tree), FilepathSetting.getTargetFilepath());
+	}
 }

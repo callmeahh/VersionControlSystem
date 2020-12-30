@@ -4,7 +4,7 @@ import java.io.File;
 
 class FilepathSetting {
 	// 文件存放路径
-	private static String filepath = "E:\\JavaWorkspace\\VersionRepository";
+	private static String filepath = "D:\\0.课程资料\\java\\commit history";
 	private static final String objectFilepath = "objects";
 	private static final String headFilepath = "refs";
 	private static final String logFilepath = "logs";

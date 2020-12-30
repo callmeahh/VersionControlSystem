@@ -51,7 +51,7 @@ public class ObjectStorage {
 		bos.close();
 		System.out.println("执行完毕，文件导出到 " + file.getAbsolutePath());
 	}
-
+	
 	// 获取路径下所有文件的地址
 	private static File[] getFileList() {
 		File dir = new File(filePath);
@@ -76,8 +76,20 @@ public class ObjectStorage {
 		}
 		return n == 1 ? index : -1; // 找到一个匹配返回其下标，否则返回-1
 	}
-
-	// 通过key查找value
+	
+	//commit前几位匹配，返回完整文件名
+	protected static String getFullName(String hash) throws Exception {
+		File[] fl = getFileList();
+		int flag = findSubstring(fl, hash);
+		if (flag != -1) {
+			String fullName = fl[flag].getName();
+			return fullName;
+		} else {
+			System.out.println("输入的哈希值不正确，请重新输入！");
+			return null;
+		}
+	}
+	// 1通过key查找value
 	protected static String searchValue(String hash) throws Exception {
 		File[] fl = getFileList();
 		int flag = findSubstring(fl, hash);
