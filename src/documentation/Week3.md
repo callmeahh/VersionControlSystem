@@ -42,8 +42,8 @@
 6. 新增Reset类：
     - resetHard(int n)：指定次数的working tree和repository回滚，不可跨分支回滚。
     - resetHard(String commit)：指定commit的working tree和repository回滚，可跨分支回滚，可向后回滚。
-    - resetMixed(int n)：指定次数的working tree回滚，不可跨分支回滚。
-    - resetMixed(String commit)：指定commit的working tree回滚，可跨分支回滚，可向后回滚。
+    - resetMixed(int n)：指定次数的repository回滚，不可跨分支回滚。
+    - resetMixed(String commit)：指定commit的repository回滚，可跨分支回滚，可向后回滚。
 
 ## 单元测试
 
@@ -55,11 +55,13 @@
     1. 新建默认分支。仓库中出现中出现master分支。
     2. 提交第一次commit
 3. 修改文件后，提交第二次commit
+    
     4. 创建切换分支testing，修改文件后，提交第三次commit
     
 4. 回滚操作：
     1. working tree和repository回滚1次，回滚成功，当前分支的commit，日志和全部日志均回滚，工作区文件也回滚。
     2. working tree和repository回滚1次，回滚失败，提示“该分支不存在此commit，请输入正确的回滚次数”。
-3. repository回滚到4d765（跨分支向前回滚），回滚成功，当前分支的commit，日志和全部日志均回滚，工作区文件未回滚。
+    3. repository回滚到4d765（跨分支向前回滚），回滚成功，当前分支的commit，日志和全部日志均回滚，工作区文件未回滚。
+    
     4. working tree和repository回滚到7089c（跨分支向后回滚），回滚成功，当前分支的commit，日志和全部日志均回滚，工作区文件也回滚。
     
