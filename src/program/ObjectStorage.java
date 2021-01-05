@@ -9,10 +9,10 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 
 public class ObjectStorage {
-	// 文件存放路径
+	// object类文件存放路径
 	private static String filePath = FilepathSetting.getObjectFilepath().getAbsolutePath();
 
-	// 将文件类型存入本地
+	// 将object类文件存入objects文件夹
 	protected static void storeFromFile(String key, File file) throws Exception {
 		BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
 		int len;
@@ -26,7 +26,7 @@ public class ObjectStorage {
 		System.out.println("执行完毕，文件导出到 " + outputPath);
 	}
 
-	// 将字符串类型存入本地
+	// 将字符串类型存入objects文件夹
 	protected static void storeFromString(String key, String value, boolean append) throws Exception {
 		String outputPath = filePath + File.separator + key;
 		BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(outputPath, append));
@@ -35,7 +35,7 @@ public class ObjectStorage {
 		System.out.println("执行完毕，文件导出到 " + outputPath);
 	}
 
-	// 将字符串类型存入本地（传入路径）
+	// 将字符串类型存入指定文件夹
 	protected static void storeFromString(String key, String value, String path, boolean append) throws Exception {
 		String outputPath = path + File.separator + key;
 		BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(outputPath, append));
@@ -51,14 +51,14 @@ public class ObjectStorage {
 		bos.close();
 		System.out.println("执行完毕，文件导出到 " + file.getAbsolutePath());
 	}
-	
-	// 获取路径下所有文件的地址
+
+	// 获取objects文件夹中所有文件的数组
 	private static File[] getFileList() {
 		File dir = new File(filePath);
 		return dir.listFiles();
 	}
 
-	// 字符串匹配（用于获取通过部分key寻找value）
+	// 由key前几位匹配objects文件夹中文件数组中的文件
 	private static int findSubstring(File[] fl, String s2) {
 		int n = 0;
 		int index = -1;
@@ -76,8 +76,8 @@ public class ObjectStorage {
 		}
 		return n == 1 ? index : -1; // 找到一个匹配返回其下标，否则返回-1
 	}
-	
-	//commit前几位匹配，返回完整文件名
+
+	// 由key前几位匹配objects文件夹中文件数组中的文件，返回完整key
 	protected static String getFullName(String hash) throws Exception {
 		File[] fl = getFileList();
 		int flag = findSubstring(fl, hash);
@@ -89,7 +89,8 @@ public class ObjectStorage {
 			return null;
 		}
 	}
-	// 1通过key查找value
+
+	// 由key前几位匹配objects文件夹中文件数组中的文件，返回value
 	protected static String searchValue(String hash) throws Exception {
 		File[] fl = getFileList();
 		int flag = findSubstring(fl, hash);
@@ -116,7 +117,7 @@ public class ObjectStorage {
 		return sb.toString();
 	}
 
-	// 删除文件夹中所有内容
+	// 删除指定文件夹中所有内容
 	protected static boolean deleteDir(String path) {
 		File file = new File(path);
 		if (!file.exists()) {// 判断是否待删除目录是否存在
@@ -173,5 +174,4 @@ public class ObjectStorage {
 			}
 		}
 	}
-
 }

@@ -1,24 +1,43 @@
 package program;
 
 public class Reset {
-	//指定次数的working tree和repository回滚
-	public static void resetHard(int n) throws Exception {
-		if(BranchControl.logReset(n) == 1) {
-			BranchControl.treeReset(n);
+	// 指定次数的working tree和repository回滚
+	public static void resetHard(int n) {
+		try {
+			if (BranchControl.logReset(n) == 1) {
+				BranchControl.treeReset(n);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
-	//指定commit的working tree和repository回滚
-	public static void resetHard(String commit) throws Exception {
-		if(BranchControl.logReset(commit) == 1) {
-			BranchControl.treeReset(commit);
+
+	// 指定commit的working tree和repository回滚
+	public static void resetHard(String commit) {
+		try {
+			if (BranchControl.logReset(commit) == 1) {
+				BranchControl.treeReset(commit);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
-	//指定次数的repository回滚
-	public static void resetMixed(int n) throws Exception {
-		BranchControl.logReset(n);
+
+	// 指定次数的repository回滚
+	public static void resetMixed(int n) {
+		try {
+			BranchControl.logReset(n);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
-	//指定commit的repository回滚
-	public static void resetMixed(String commit) throws Exception {
-		BranchControl.logReset(commit);
+
+	// 指定commit的repository回滚
+	public static void resetMixed(String commit) {
+		try {
+			BranchControl.logReset(commit);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
