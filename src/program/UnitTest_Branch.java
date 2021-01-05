@@ -31,6 +31,7 @@ public class UnitTest_Branch {
 		BranchControl.switchBranch("testing");
 		BranchControl.getCurrentBranchLog();// 查看当前分支日志
 		BranchControl.getAllLog();// 查看全部日志
+		
 	}
 
 }

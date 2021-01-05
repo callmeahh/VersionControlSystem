@@ -13,11 +13,11 @@ public class Reset {
 			BranchControl.treeReset(commit);
 		}
 	}
-	//指定次数的working tree回滚
+	//指定次数的repository回滚
 	public static void resetMixed(int n) throws Exception {
 		BranchControl.logReset(n);
 	}
-	//指定commit的working tree回滚
+	//指定commit的repository回滚
 	public static void resetMixed(String commit) throws Exception {
 		BranchControl.logReset(commit);
 	}

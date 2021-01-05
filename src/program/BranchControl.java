@@ -142,9 +142,15 @@ public class BranchControl {
 		}
 	}
 
-	// TODO：重命名分支
-	public static String renameBranch(String branchName, String newBranchName) {
-		return newBranchName;
+	//判断string是否为当前分支
+	private static boolean isBranch(String b1) {
+		String b = getCurrentBranch();
+		if(b1.equals(b)) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 	
 	// 初始化分支（新建分支时）
@@ -219,7 +225,54 @@ public class BranchControl {
 		return getCurrentBranch();
 	}
 
-	// 打印所有分支
+	//重命名分支
+	public static String renameBranch(String branchName, String newBranchName) throws Exception {
+		ArrayList<String> arr = getAllBranchName();
+		int exist = 0;
+		File f1 = null;
+		File f2 = null;
+		//判断分支是否存在
+		for(int i = 0; i < arr.size(); i++) {
+			if(branchName.equals(arr.get(i))) {
+				exist = 1;
+				f1 = new File(FilepathSetting.getLogFilepath() + File.separator + branchName);
+				f2 = new File(FilepathSetting.getHeadFilepath() + File.separator + branchName);
+				break;
+			}
+		}
+		if(exist == 0) {
+			System.out.println("该分支不存在，重命名失败");			
+		}
+		//判断新命名是否重名
+		for(int i = 0; i < arr.size(); i++) {
+			if(newBranchName.equals(arr.get(i))) {
+				exist = -1;
+				System.out.println("新命名与已有分支名重名，重命名失败");
+				break;
+			}
+		}
+		//若分支存在且无重名
+		if(exist == 1) {
+			//若为当前分支
+			if(isBranch(branchName)) {
+				String message = "Branch: renamed " +  branchName + " to " + newBranchName;
+				String key = getHead();
+				String writeline = key + " " + key + " " + message + "\n";
+				//改HEAD
+				ObjectStorage.updateFile(newBranchName, getCurrentBranchFile(), false);
+				//加logs.HEAD
+				ObjectStorage.updateFile(writeline, getAllLogFile(), true);
+			//重命名refs.分支
+			f2.renameTo(new File(f2.getParent()+File.separator+newBranchName));
+			//重命名logs.refs.分支
+			f1.renameTo(new File(f1.getParent()+File.separator+newBranchName));
+			//加logs.refs.分支
+			ObjectStorage.updateFile(writeline, getHeadLogFile(), true);
+			}
+		}
+		return newBranchName;
+	}
+// 打印所有分支
 	public static String printAllBranches() {
 		StringBuilder s = new StringBuilder();
 		for (String f : getAllBranchName()) {

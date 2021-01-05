@@ -23,11 +23,6 @@ public class Branch {
 			}
 		} 
 	}
-	// TODO：重命名分支
-	public String renameBranch(String newName) {
-		this.branchName = newName;
-		return newName;
-	}
 	
 	public String getBranchName() {
 		return branchName;

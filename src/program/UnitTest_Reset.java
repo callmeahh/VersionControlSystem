@@ -50,6 +50,14 @@ public class UnitTest_Reset {
 		
 		// 10. working tree和repository回滚到7089c（跨分支向后回滚）
 		Reset.resetHard("7089c");
+		
+		// 11. 重命名分支
+		//输入不存在的分支test时，重命名失败
+		BranchControl.renameBranch("test", "test1");
+		//输入已存在的分支master时，重命名失败
+		BranchControl.renameBranch("testing", "master");
+		//输入存在的分支testing和不存在的新命名test1时，重命名成功
+		BranchControl.renameBranch("testing", "test1");
 	}
 
 }
