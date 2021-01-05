@@ -135,14 +135,11 @@ public class CLI {
 				.addCommand("rename", rename).addCommand("reset", reset).addCommand("log", log).build();
 		try {
 			commander.parse(argv);
-		}catch (ParameterException pe) {
+		} catch (ParameterException pe) {
 			System.out.println("输入参数不正确，请重新输入。ParameterException");
 			return;
-		}catch(Exception ne) {
-			System.out.println("NullPointerException");
-			return;
 		}
-//		commander.parse("reset","-HARD","-t","1");
+//		commander.parse("--help");
 		if (cli.help) {
 			commander.usage();
 			return;
@@ -175,7 +172,7 @@ public class CLI {
 				log.run();
 			}
 		} catch (NullPointerException e) {
-			System.out.println("NullPointerException");
-		} 
+//			System.out.println("NullPointerException");
+		}
 	}
 }

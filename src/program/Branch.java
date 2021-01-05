@@ -19,16 +19,11 @@ public class Branch {
 		this.branchName = branchName;
 		if (BranchControl.initBranch(branchName)) {
 			if (isSwitch) {
-			BranchControl.switchBranch(branchName);
+				BranchControl.switchBranch(branchName);
 			}
-		} 
+		}
 	}
-	// TODO：重命名分支
-	public String renameBranch(String newName) {
-		this.branchName = newName;
-		return newName;
-	}
-	
+
 	public String getBranchName() {
 		return branchName;
 	}
