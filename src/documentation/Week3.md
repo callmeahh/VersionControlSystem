@@ -39,7 +39,7 @@
     - 新增方法deleteDir()：清空整个文件夹
     - 新增方法formatValue()：将之前存储的value格式化成二维数组
     - 新增方法restoreFiles()：将二位数组中的记录的key还原成文件
-    - 新增方法getFullName(String hash): 输入commit的key的前几位进行匹配，返回完整的key
+    - 新增方法getFullName(String hash):  输入commit的key的前几位进行匹配，返回完整的key
 5. 修改Bug：修改创建tree对象时出现key值不匹配的Bug；修改创建commit对象每次需要传tree对象的参数的问题。
 6. 新增Reset类：
     - resetHard(int n)：指定次数的working tree和repository回滚，不可跨分支回滚。
@@ -50,16 +50,23 @@
 ## 单元测试
 
 1. 初始化仓库：创建所有所需的文件夹。
+
 2. 设置需要管理的路径
+
 3. 分支操作：
     1. 新建默认分支。仓库中出现中出现master分支。
     2. 提交第一次commit
-4. 修改文件后，提交第二次commit
-    1. 创建切换分支testing，修改文件后，提交第三次commit
-5. 回滚操作：
+3. 修改文件后，提交第二次commit
+   
+    4. 创建切换分支testing，修改文件后，提交第三次commit
+    
+4. 回滚操作：
     1. working tree和repository回滚1次，回滚成功，当前分支的commit，日志和全部日志均回滚，工作区文件也回滚。
     2. working tree和repository回滚1次，回滚失败，提示“该分支不存在此commit，请输入正确的回滚次数”。
     3. repository回滚到4d765（跨分支向前回滚），回滚成功，当前分支的commit，日志和全部日志均回滚，工作区文件未回滚。
     4. working tree和repository回滚到7089c（跨分支向后回滚），回滚成功，当前分支的commit，日志和全部日志均回滚，工作区文件也回滚。
+
 6. 分支重命名：
-    1. 输入不存在的分支test时，重命名失败。 2. 输入已存在的分支master时，重命名失败。 3. 输入存在的分支testing和不存在的新命名test1时，重命名成功。
+   	1. 输入不存在的分支test时，重命名失败。
+    	2. 输入已存在的分支master时，重命名失败。
+    	3. 输入存在的分支testing和不存在的新命名test1时，重命名成功。
