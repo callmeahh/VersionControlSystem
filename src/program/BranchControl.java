@@ -331,8 +331,9 @@ public class BranchControl {
 
 	// 回滚n次，修改工作区
 	protected static void treeReset(int n) throws Exception {
+		String before = getHead();
 		ObjectStorage.deleteDir(FilepathSetting.getTargetFilepath());
-		String tree = ObjectStorage.searchValue(getBefore(n)).substring(5, 45);
+		String tree = ObjectStorage.searchValue(before).substring(5, 45);
 		ObjectStorage.restoreFiles(ObjectStorage.formatValue(tree), FilepathSetting.getTargetFilepath());
 	}
 
