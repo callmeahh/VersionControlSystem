@@ -1,13 +1,9 @@
 # VersionControlSystem
 A version control system developed by Java.
 
-小组成员：
+第17小组
 
-敖海航 2000022703
-
-刘海云 2000022718
-
-赵晓浩 2000022791
+小组成员：敖海航 2000022703，刘海云 2000022718，赵晓浩 2000022791
 
 ## 课程项目要求
 
@@ -23,5 +19,7 @@ A version control system developed by Java.
 
 ## 设计文档
 
-- [第一周：实现blob对象和tree对象](https://github.com/callmeahh/VersionControlSystem/tree/main/src/documentation/Week1.md)
-- 第二周：实现commit对象
+- [第1周：实现blob对象和tree对象](https://github.com/callmeahh/VersionControlSystem/tree/main/src/documentation/Week1.md)
+- [第2周：实现commit对象](https://github.com/callmeahh/VersionControlSystem/tree/main/src/documentation/Week2.md)
+
+- [第3-4周：实现Branch和命令行交互](https://github.com/callmeahh/VersionControlSystem/tree/main/src/documentation/Week3-4.md)
