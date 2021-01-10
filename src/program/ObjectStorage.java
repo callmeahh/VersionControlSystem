@@ -30,7 +30,7 @@ public class ObjectStorage {
 		gos.finish();
 		gos.flush();
 		gos.close();
-		System.out.println("执行完毕，文件导出到 " + outputPath);
+//		System.out.println("执行完毕，文件导出到 " + outputPath);
 	}
 
 	// 将字符串类型存入objects文件夹
@@ -39,7 +39,7 @@ public class ObjectStorage {
 		BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(outputPath, append));
 		bos.write(value.getBytes());
 		bos.close();
-		System.out.println("执行完毕，文件导出到 " + outputPath);
+//		System.out.println("执行完毕，文件导出到 " + outputPath);
 	}
 
 	// 将字符串类型存入指定文件夹
@@ -48,7 +48,7 @@ public class ObjectStorage {
 		BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(outputPath, append));
 		bos.write(value.getBytes());
 		bos.close();
-		System.out.println("执行完毕，文件导出到 " + outputPath);
+//		System.out.println("执行完毕，文件导出到 " + outputPath);
 	}
 
 	// 更新文件内容
@@ -56,7 +56,7 @@ public class ObjectStorage {
 		BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file, append));
 		bos.write(content.getBytes());
 		bos.close();
-		System.out.println("执行完毕，文件导出到 " + file.getAbsolutePath());
+//		System.out.println("执行完毕，文件导出到 " + file.getAbsolutePath());
 	}
 
 	// 获取objects文件夹中所有文件的数组
@@ -148,6 +148,7 @@ public class ObjectStorage {
 		return true;
 	}
 
+	// 将blob类型还原为文件
 	protected static void decompress(String fileName, String key, String path) throws Exception {
 		File f = new File(FilepathSetting.getObjectFilepath().getAbsolutePath() + File.separator + key);
 		InputStream is = new FileInputStream(f);

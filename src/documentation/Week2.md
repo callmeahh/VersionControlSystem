@@ -42,3 +42,6 @@
 2. 通过Tree1对象创建commit对象，观察HEAD文件和HEADLog文件中存储的内容
 3. 通过Tree2对象创建commit对象，观察HEAD文件和HEADLog文件中存储的内容
 
+
+
+时间：2020.12.20

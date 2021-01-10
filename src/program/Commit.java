@@ -16,13 +16,13 @@ public class Commit extends KeyValueObject {
 	// 通过tree对象和commit注释创建commit对象
 	private Commit(Tree tree, String message) {
 		value.append("tree " + tree.getKey() + "\n");
-		if (!BranchControl.getHead().equals("null")) {
-			value.append("parent " + BranchControl.getHead() + "\n");
+		if (!FileOperation.getHead().equals("null")) {
+			value.append("parent " + FileOperation.getHead() + "\n");
 		}
 		value.append(message);
 		this.key = generateKey();
 		record();
-		BranchControl.updateKey(key, message);
+		FileOperation.updateKey(key, message);
 	}
 
 	@Override

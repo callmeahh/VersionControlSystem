@@ -37,10 +37,10 @@ class CommandBranch {
 			new Branch(branchName, isSwitch);
 		}
 		if (showAll) {
-			BranchControl.printAllBranches();
+			Branch.printAllBranches();
 		}
 		if (showCurrent) {
-			System.out.println(BranchControl.getCurrentBranch());
+			System.out.println(FileOperation.getCurrentBranch());
 		}
 
 	}
@@ -52,7 +52,7 @@ class CommandSwitch {
 	private String branchName;
 
 	void run() {
-		BranchControl.switchBranch(branchName);
+		Branch.switchBranch(branchName);
 	}
 }
 
@@ -62,7 +62,7 @@ class CommandRename {
 	private List<String> branchNames;
 
 	void run() {
-		BranchControl.renameBranch(branchNames.get(0), branchNames.get(1));
+		Branch.renameBranch(branchNames.get(0), branchNames.get(1));
 	}
 }
 
@@ -75,7 +75,7 @@ class CommandReset {
 	@Parameter(names = { "-c", "--commit" }, description = "reset to the specific commit history")
 	private String commitKey;
 
-	void run() throws Exception {
+	void run() {
 		if ((times != 0 && commitKey != null) || times == 0 && commitKey == null) {
 			System.out.println("输入错误！");
 		}
@@ -106,10 +106,10 @@ class CommandLog {
 
 	void run() {
 		if (current) {
-			BranchControl.getCurrentBranchLog();
+			Log.getCurrentBranchLog();
 		}
 		if (all) {
-			BranchControl.getAllLog();
+			Log.getAllLog();
 		}
 	}
 }
@@ -135,11 +135,11 @@ public class CLI {
 				.addCommand("rename", rename).addCommand("reset", reset).addCommand("log", log).build();
 		try {
 			commander.parse(argv);
+//			commander.parse("--help"); //在此处测试命令行交互
 		} catch (ParameterException pe) {
 			System.out.println("输入参数不正确，请重新输入。ParameterException");
 			return;
 		}
-//		commander.parse("--help");
 		if (cli.help) {
 			commander.usage();
 			return;
